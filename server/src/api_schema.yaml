@@ -1,13 +1,9 @@
 openapi: 3.0.0
 info:
   title: Photo Rating API
-  description: API for a photo rating application with user authentication, photo management, and rating system.
   version: 1.0.0
-servers:
-  - url: http://localhost:5000/api
-    description: Local development server
 paths:
-  /register:
+  /api/register:
     post:
       summary: Register a new user
       requestBody:
@@ -27,39 +23,24 @@ paths:
                   type: string
                   enum: [male, female, other]
                 age:
-                  type: integer
+                  type: number
       responses:
-        '201':
+        '200':
           description: User registered successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  token:
+                  message:
                     type: string
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      email:
-                        type: string
-                      name:
-                        type: string
-                      gender:
-                        type: string
-                      age:
-                        type: integer
-                      points:
-                        type: integer
+                  userId:
+                    type: string
         '400':
-          description: Email already registered
-        '500':
-          description: Registration failed
-  /login:
+          description: Bad request
+  /api/login:
     post:
-      summary: Login user
+      summary: Login a user
       requestBody:
         required: true
         content:
@@ -79,28 +60,13 @@ paths:
               schema:
                 type: object
                 properties:
+                  message:
+                    type: string
                   token:
                     type: string
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      email:
-                        type: string
-                      name:
-                        type: string
-                      gender:
-                        type: string
-                      age:
-                        type: integer
-                      points:
-                        type: integer
-        '400':
+        '401':
           description: Invalid credentials
-        '500':
-          description: Login failed
-  /forgot-password:
+  /api/forgot-password:
     post:
       summary: Request password reset
       requestBody:
@@ -114,21 +80,10 @@ paths:
                   type: string
       responses:
         '200':
-          description: Reset token generated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                  resetToken:
-                    type: string
+          description: Password reset email sent
         '404':
           description: User not found
-        '500':
-          description: Forgot password failed
-  /reset-password:
+  /api/reset-password:
     post:
       summary: Reset password
       requestBody:
@@ -138,7 +93,7 @@ paths:
             schema:
               type: object
               properties:
-                resetToken:
+                token:
                   type: string
                 newPassword:
                   type: string
@@ -146,49 +101,32 @@ paths:
         '200':
           description: Password reset successful
         '400':
-          description: Invalid or expired reset token
-        '500':
-          description: Reset password failed
-  /profile:
+          description: Invalid token
+  /api/profile:
     get:
       summary: Get user profile
-      security:
-        - bearerAuth: []
       responses:
         '200':
-          description: User profile fetched successfully
+          description: User profile data
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      email:
-                        type: string
-                      name:
-                        type: string
-                      gender:
-                        type: string
-                      age:
-                        type: integer
-                      points:
-                        type: integer
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  gender:
+                    type: string
+                  age:
+                    type: number
+                  points:
+                    type: number
         '401':
-          description: Authentication token required
-        '403':
-          description: Invalid token
-        '404':
-          description: User not found
-        '500':
-          description: Failed to fetch profile
+          description: Unauthorized
     put:
       summary: Update user profile
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -200,45 +138,16 @@ paths:
                   type: string
                 gender:
                   type: string
-                  enum: [male, female, other]
-                age:
-                  type: integer
+                  age:
+                  type: number
       responses:
         '200':
-          description: Profile updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      email:
-                        type: string
-                      name:
-                        type: string
-                      gender:
-                        type: string
-                      age:
-                        type: integer
-                      points:
-                        type: integer
+          description: Profile updated
         '401':
-          description: Authentication token required
-        '403':
-          description: Invalid token
-        '404':
-          description: User not found
-        '500':
-          description: Failed to update profile
-  /photos/upload:
+          description: Unauthorized
+  /api/photos/upload:
     post:
       summary: Upload a photo
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -262,18 +171,14 @@ paths:
                   photoId:
                     type: string
         '400':
-          description: Image size exceeds 1MB limit
+          description: Image size exceeds limit
         '401':
-          description: Authentication token required
-        '403':
-          description: Invalid token
+          description: Unauthorized
         '500':
-          description: Photo upload failed
-  /photos/add-to-rating:
+          description: Upload failed
+  /api/photos/add-to-rating:
     post:
       summary: Add photo to rating list
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -294,22 +199,18 @@ paths:
                   message:
                     type: string
                   points:
-                    type: integer
+                    type: number
         '400':
-          description: Not enough points to add photo to rating list
-        '401':
-          description: Authentication token required
-        '403':
-          description: Invalid token
+          description: Not enough points
         '404':
           description: Photo not found
+        '401':
+          description: Unauthorized
         '500':
-          description: Failed to add photo to rating list
-  /photos/remove-from-rating:
+          description: Operation failed
+  /api/photos/remove-from-rating:
     post:
       summary: Remove photo from rating list
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -322,39 +223,45 @@ paths:
       responses:
         '200':
           description: Photo removed from rating list
-        '401':
-          description: Authentication token required
-        '403':
-          description: Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
         '404':
           description: Photo not found
+        '401':
+          description: Unauthorized
         '500':
-          description: Failed to remove photo from rating list
-  /photos/for-rating:
+          description: Operation failed
+  /api/photos/for-rating:
     get:
       summary: Get photos for rating with filters
-      security:
-        - bearerAuth: []
       parameters:
-        - in: query
-          name: gender
+        - name: gender
+          in: query
+          description: Filter by gender
+          required: false
           schema:
             type: string
             enum: [male, female, other]
+        - name: minAge
+          in: query
+          description: Minimum age filter
           required: false
-        - in: query
-          name: minAge
           schema:
-            type: integer
+            type: number
+        - name: maxAge
+          in: query
+          description: Maximum age filter
           required: false
-        - in: query
-          name: maxAge
           schema:
-            type: integer
-          required: false
+            type: number
       responses:
         '200':
-          description: Photos fetched successfully
+          description: List of photos for rating
           content:
             application/json:
               schema:
@@ -377,18 +284,14 @@ paths:
                             gender:
                               type: string
                             age:
-                              type: integer
+                              type: number
         '401':
-          description: Authentication token required
-        '403':
-          description: Invalid token
+          description: Unauthorized
         '500':
-          description: Failed to fetch photos for rating
-  /photos/rate:
+          description: Failed to fetch photos
+  /api/photos/rate:
     post:
       summary: Rate a photo
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -399,7 +302,7 @@ paths:
                 photoId:
                   type: string
                 score:
-                  type: integer
+                  type: number
       responses:
         '200':
           description: Photo rated successfully
@@ -411,31 +314,27 @@ paths:
                   message:
                     type: string
                   points:
-                    type: integer
+                    type: number
         '400':
-          description: Cannot rate your own photo
-        '401':
-          description: Authentication token required
-        '403':
-          description: Invalid token
+          description: Cannot rate own photo
         '404':
           description: Photo not found
+        '401':
+          description: Unauthorized
         '500':
-          description: Failed to rate photo
-  /photos/{photoId}/stats:
+          description: Rating failed
+  /api/photos/{photoId}/stats:
     get:
       summary: Get rating statistics for a photo
-      security:
-        - bearerAuth: []
       parameters:
-        - in: path
-          name: photoId
+        - name: photoId
+          in: path
+          required: true
           schema:
             type: string
-          required: true
       responses:
         '200':
-          description: Rating statistics fetched successfully
+          description: Rating statistics
           content:
             application/json:
               schema:
@@ -445,7 +344,7 @@ paths:
                     type: object
                     properties:
                       totalRatings:
-                        type: integer
+                        type: number
                       averageScore:
                         type: number
                       byGender:
@@ -455,21 +354,21 @@ paths:
                             type: object
                             properties:
                               count:
-                                type: integer
+                                type: number
                               average:
                                 type: number
                           female:
                             type: object
                             properties:
                               count:
-                                type: integer
+                                type: number
                               average:
                                 type: number
                           other:
                             type: object
                             properties:
                               count:
-                                type: integer
+                                type: number
                               average:
                                 type: number
                       byAge:
@@ -479,34 +378,26 @@ paths:
                             type: object
                             properties:
                               count:
-                                type: integer
+                                type: number
                               average:
                                 type: number
                           '26-35':
                             type: object
                             properties:
                               count:
-                                type: integer
+                                type: number
                               average:
                                 type: number
                           '36+':
                             type: object
                             properties:
                               count:
-                                type: integer
+                                type: number
                               average:
                                 type: number
-        '401':
-          description: Authentication token required
-        '403':
-          description: Invalid token
         '404':
           description: Photo not found
+        '401':
+          description: Unauthorized
         '500':
-          description: Failed to fetch rating stats
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+          description: Failed to fetch stats
