@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { login } from '../../api/auth';
+import { loginUser } from '../../api/auth';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const Login = () => {
   const [error, setError] = useState('');
 
   const mutation = useMutation({
-    mutationFn: login,
+    mutationFn: loginUser,
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
       navigate(from, { replace: true });
