@@ -8,14 +8,12 @@ const Home = () => {
   const navigate = useNavigate();
   const isAuthenticated = !!localStorage.getItem('token');
 
-  const { data: profileData, isLoading, isError } = useQuery(
-    ['profile'],
-    getProfile,
-    {
-      enabled: isAuthenticated,
-      retry: false,
-    }
-  );
+  const { data: profileData, isLoading, isError } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+    enabled: isAuthenticated,
+    retry: false,
+  });
 
   return (
     <Container maxWidth="md">
