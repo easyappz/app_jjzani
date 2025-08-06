@@ -20,18 +20,16 @@ function App() {
   const navigate = useNavigate();
   const isAuthenticated = !!localStorage.getItem('token');
 
-  const { data: profileData, isLoading, isError } = useQuery(
-    ['profile'],
-    getProfile,
-    {
-      enabled: isAuthenticated,
-      retry: false,
-      onError: () => {
-        localStorage.removeItem('token');
-        navigate('/login');
-      }
+  const { data: profileData, isLoading, isError } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+    enabled: isAuthenticated,
+    retry: false,
+    onError: () => {
+      localStorage.removeItem('token');
+      navigate('/login');
     }
-  );
+  });
 
   useEffect(() => {
     if (isAuthenticated && !isLoading && !isError && profileData) {
