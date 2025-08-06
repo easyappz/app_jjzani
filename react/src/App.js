@@ -14,6 +14,7 @@ import RatingPage from './pages/RatingPage';
 import StatsPage from './pages/StatsPage';
 import ManagePage from './pages/ManagePage';
 import Profile from './pages/user/Profile';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const navigate = useNavigate();
@@ -47,12 +48,36 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/upload" element={<UploadPage />} />
-      <Route path="/rating" element={<RatingPage />} />
-      <Route path="/stats" element={<StatsPage />} />
-      <Route path="/stats/:photoId" element={<PhotoStats />} />
-      <Route path="/manage" element={<ManagePage />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/upload" element={
+        <ProtectedRoute>
+          <UploadPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/rating" element={
+        <ProtectedRoute>
+          <RatingPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/stats" element={
+        <ProtectedRoute>
+          <StatsPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/stats/:photoId" element={
+        <ProtectedRoute>
+          <PhotoStats />
+        </ProtectedRoute>
+      } />
+      <Route path="/manage" element={
+        <ProtectedRoute>
+          <ManagePage />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 }
