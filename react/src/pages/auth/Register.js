@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, TextField, Button, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { register } from '../../api/auth';
+import { registerUser } from '../../api/auth';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Register = () => {
   const [error, setError] = useState('');
 
   const mutation = useMutation({
-    mutationFn: register,
+    mutationFn: registerUser,
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
       navigate('/');
