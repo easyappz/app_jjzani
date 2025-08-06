@@ -1,24 +1,16 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Box } from '@mui/material';
-import HomePage from './pages/HomePage';
-import UploadPage from './pages/UploadPage';
-import RatingPage from './pages/RatingPage';
-import ManagePage from './pages/ManagePage';
-import StatsPage from './pages/StatsPage';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import PhotoStats from './components/Stats/PhotoStats';
+import PhotoRating from './components/Rating/PhotoRating';
 
 function App() {
   return (
     <Router>
-      <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/upload" element={<UploadPage />} />
-          <Route path="/rating" element={<RatingPage />} />
-          <Route path="/manage" element={<ManagePage />} />
-          <Route path="/stats/:photoId" element={<StatsPage />} />
-        </Routes>
-      </Box>
+      <Routes>
+        <Route path="/stats/:photoId" element={<PhotoStats />} />
+        <Route path="/rating" element={<PhotoRating />} />
+        <Route path="/" element={<div>Добро пожаловать! Выберите раздел.</div>} />
+      </Routes>
     </Router>
   );
 }
